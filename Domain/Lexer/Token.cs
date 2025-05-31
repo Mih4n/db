@@ -1,0 +1,3 @@
+namespace Domain.Lexer;
+
+public record Token(TokenType Type, TokenSubType SubType, string Lexeme);

@@ -1,0 +1,80 @@
+using System.Reflection;
+using App.Contracts.Lexer;
+using Domain.Lexer;
+
+namespace App.Lexer;
+
+public class Lexer
+{
+    private readonly LexerContext context;
+    private readonly List<ITokenHandler> handlers = [];
+
+    public Lexer(string text)
+    {
+        context = new LexerContext(text);
+
+        Assembly
+            .GetExecutingAssembly()
+            .GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract && typeof(ITokenHandler).IsAssignableFrom(t))
+            .ToList()
+            .ForEach(t =>
+            {
+                var handler = (ITokenHandler?)Activator.CreateInstance(t);
+                if (handler != null)
+                    handlers.Add(handler);
+            });
+    }
+
+    public List<Token> Tokenize()
+    {
+        var tokens = new List<Token>();
+
+        while (!context.IsAtEnd)
+        {
+            SkipPunctuation(context);
+
+            if (context.IsAtEnd)
+                break;
+
+            char current = context.Peek();
+            ITokenHandler? handler = handlers.FirstOrDefault(h => h.CanHandle(current));
+
+            if (handler == null)
+                throw new Exception($"Unexpected character at position {context.Position}: {current}");
+
+            var token = handler.Handle(context);
+
+            if (token == null)
+                throw new Exception($"Failed to handle token at position {context.Position}: {current}");
+
+            tokens.Add(token);
+
+            if (token.Type == TokenType.keyword)
+                context.Keyword = token;
+        }
+
+        tokens.Add(new Token(TokenType.keyword, TokenSubType.End, string.Empty));
+
+        return tokens;
+    }
+
+    private HashSet<char> SkippingPunctuation = [
+        ' ',
+        ',',
+        ';',
+        '\n',
+        '\r',
+    ];
+
+    private void SkipPunctuation(LexerContext context)
+    {
+        while (
+            !context.IsAtEnd &&
+            SkippingPunctuation.Contains(context.Peek())
+        )
+        {
+            context.Advance();
+        }
+    } 
+}
