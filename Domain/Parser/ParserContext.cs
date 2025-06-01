@@ -20,8 +20,12 @@ public class ParserContext
             throw new Exception("Unexpected end of input");
 
         var token = Pick();
-        if (!expected.Contains(token.SubType) || token.Type != type)
-            throw new Exception($"Expected token type {type} {expected}, but found {token.Type} {token.SubType} ({token.Lexeme})");
+        if (token.Type != type)
+            throw new Exception($"Expected token type {type}, but found {token.Type} {token.SubType} ({token.Lexeme})");
+        if (token.SubType == TokenSubType.Any)
+            return;
+        if (!expected.Contains(token.SubType))
+            throw new Exception($"Expected token sub type {string.Join(", ", expected.Select(e => e.ToString()).ToArray())}, but found {token.Type} {token.SubType} ({token.Lexeme})");
     }
 
     public Token Pick() => Tokens[Current];

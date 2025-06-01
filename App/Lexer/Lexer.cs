@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json;
 using App.Contracts.Lexer;
 using Domain.Lexer;
 
@@ -50,11 +51,14 @@ public class Lexer
 
             tokens.Add(token);
 
-            if (token.Type == TokenType.keyword)
+            if (token.Type == TokenType.Keyword)
                 context.Keyword = token;
+
+            if (token.Type == TokenType.Punctuation)
+                context.Keyword = null;
         }
 
-        tokens.Add(new Token(TokenType.keyword, TokenSubType.End, string.Empty));
+        tokens.Add(new Token(TokenType.Keyword, TokenSubType.End, string.Empty));
 
         return tokens;
     }

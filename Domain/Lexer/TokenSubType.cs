@@ -2,6 +2,7 @@ namespace Domain.Lexer;
 
 public enum TokenSubType
 {
+    Any,
     // Special tokens
     End,
     // Keywords selection
@@ -17,9 +18,13 @@ public enum TokenSubType
     // Keywords control flow
     If,
     Else,
+    // Punctuation
+    OpenParenthesis,
+    CloseParenthesis,
     // Identifiers
+    Column,
+    Table,
     Number,
     Operator,
-    Word,
     String
 }

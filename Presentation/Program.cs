@@ -1,4 +1,3 @@
-using App;
 using App.Lexer;
 using App.Processor;
 
@@ -11,8 +10,9 @@ app.MapPost("/query", async (HttpRequest request) =>
     using var reader = new StreamReader(request.Body);
     var query = await reader.ReadToEndAsync();
     var processor = new Processor();
-    var parser = new Parser(new Lexer(query));
-    var result = processor.Process(parser.Parse());
+    var lexer = new Lexer(query);
+    var parser = new Parser(lexer);
+    var result = await processor.ProcessAsync(parser.Parse());
     return Results.Ok(result);
 });
 

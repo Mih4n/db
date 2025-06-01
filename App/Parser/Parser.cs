@@ -1,6 +1,5 @@
 using System.Reflection;
 using App.Contracts.Parser;
-using Domain.Lexer;
 using Domain.Parser;
 using Domain.Queries;
 
