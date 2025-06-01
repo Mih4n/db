@@ -21,7 +21,7 @@ public class ParserContext
 
         var token = Pick();
         if (token.Type != type)
-            throw new Exception($"Expected token type {type}, but found {token.Type} {token.SubType} ({token.Lexeme})");
+            throw new Exception($"Expected token type {type} {string.Join(", ", expected.Select(e => e.ToString()).ToArray())}, but found {token.Type} {token.SubType} ({token.Lexeme})");
         if (token.SubType == TokenSubType.Any)
             return;
         if (!expected.Contains(token.SubType))

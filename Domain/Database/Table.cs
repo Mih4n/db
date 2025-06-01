@@ -32,7 +32,7 @@ public class Table
             throw new Exception("Table already exists");
 
         await File.WriteAllTextAsync(metaPath, JsonSerializer.Serialize(meta));
-        await File.WriteAllTextAsync(dataPath, string.Join(",", meta.Columns.Select(c => c.Name)) + Environment.NewLine);
+        await File.WriteAllTextAsync(dataPath, string.Empty);
 
         return new Table(directory) { Meta = meta };
     }
@@ -44,6 +44,8 @@ public class Table
         while ((line = await reader.ReadLineAsync()) != null)
         {
             var values = line.Split(',');
+            if (values.Length != Meta.Columns.Count)
+                continue;
             var row = Meta.Columns
                 .Select((col, i) => new { col.Name, Value = values[i] })
                 .ToDictionary(x => x.Name, x => x.Value as object);
@@ -53,10 +55,10 @@ public class Table
         }
     }
 
-    public void InsertRow(Dictionary<string, object> row)
+    public async Task InsertRowAsync(Dictionary<string, object> row)
     {
         var line = string.Join(",", Meta.Columns.Select(col => row[col.Name]?.ToString() ?? ""));
-        File.AppendAllText(dataPath, line + Environment.NewLine);
+        await File.AppendAllTextAsync(dataPath, line + Environment.NewLine);
     }
 }
 

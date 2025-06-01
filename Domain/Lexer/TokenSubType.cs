@@ -11,6 +11,8 @@ public enum TokenSubType
     Where,
     // Keywords manipulation
     Insert,
+    Into,
+    Values,
     Update,
     Delete,
     Create,

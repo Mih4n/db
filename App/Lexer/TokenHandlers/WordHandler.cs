@@ -14,6 +14,8 @@ public class WordHandler : ITokenHandler
         ["from"] = TokenSubType.From,
         ["where"] = TokenSubType.Where,
         ["insert"] = TokenSubType.Insert,
+        ["into"] = TokenSubType.Into,
+        ["values"] = TokenSubType.Values,
         ["update"] = TokenSubType.Update,
         ["delete"] = TokenSubType.Delete,
         ["create"] = TokenSubType.Create,
