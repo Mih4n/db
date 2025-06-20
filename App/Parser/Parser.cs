@@ -14,12 +14,19 @@ public class Parser
     private Expression ParseExpression(ParserContext context, float minBp)
     {
         Expression lhs;
+        Expression rhs;
+        
         Token token = context.Pick();
         context.Advance();
 
         if (token.Type == TokenType.Literal || token.Type == TokenType.Identifier)
         {
             lhs = token;
+        }
+        else if (token.Type == TokenType.Keyword)
+        {
+            lhs = ParseExpression(context, token.GetBindingPower().rightBp);
+            lhs = new Operation(token, [lhs]);
         }
         else if (token.Type == TokenType.Punctuation && token.SubType == TokenSubType.OpenParenthesis)
         {
@@ -50,7 +57,7 @@ public class Parser
 
             context.Advance();
 
-            Expression rhs = ParseExpression(context, rightBp);
+            rhs = ParseExpression(context, rightBp);
 
             lhs = new Operation(lookahead, [lhs, rhs]);
         }
