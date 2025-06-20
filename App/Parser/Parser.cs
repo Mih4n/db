@@ -15,7 +15,7 @@ public class Parser
     {
         Expression lhs;
         Expression rhs;
-        
+
         Token token = context.Pick();
         context.Advance();
 
@@ -34,8 +34,7 @@ public class Parser
             lhs = ParseExpression(context, 0);
 
             context.Expect(TokenType.Punctuation, TokenSubType.CloseParenthesis);
-
-            return lhs;
+            context.Advance();
         }
         else
         {

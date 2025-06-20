@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SQL AST Visualizer</title>
+  <style>
+    .node circle {
+      fill: #88c0d0;
+    }
+
+    .node text {
+      font: 12px sans-serif;
+    }
+
+    .link {
+      fill: none;
+      stroke: #ccc;
+      stroke-width: 2px;
+    }
+  </style>
+</head>
+<body>
+  <svg width="960" height="800"></svg>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>
+    const data = {
+      name: "WHERE",
+      children: [
+        {
+          name: "FROM",
+          children: [
+            {
+              name: "SELECT",
+              children: [
+                { name: "DA" }
+              ]
+            },
+            {
+              name: "where",
+              children: [
+                {
+                  name: "from",
+                  children: [
+                    {
+                      name: "select",
+                      children: [
+                        { name: "da" }
+                      ]
+                    },
+                    { name: "da" }
+                  ]
+                },
+                { name: "da" }
+              ]
+            }
+          ]
+        },
+        { name: "DA" }
+      ]
+    };
+
+    const svg = d3.select("svg"),
+          width = +svg.attr("width"),
+          height = +svg.attr("height");
+
+    const treeLayout = d3.tree().size([height - 100, width - 200]);
+
+    const root = d3.hierarchy(data);
+    treeLayout(root);
+
+    // Draw links
+    svg.selectAll(".link")
+      .data(root.links())
+      .join("path")
+      .attr("class", "link")
+      .attr("d", d3.linkHorizontal()
+        .x(d => d.y + 100)
+        .y(d => d.x));
+
+    // Draw nodes
+    const node = svg.selectAll(".node")
+      .data(root.descendants())
+      .join("g")
+      .attr("class", "node")
+      .attr("transform", d => `translate(${d.y + 100},${d.x})`);
+
+    node.append("circle").attr("r", 20);
+    node.append("text")
+      .attr("dy", 4)
+      .attr("x", d => d.children ? -25 : 25)
+      .style("text-anchor", d => d.children ? "end" : "start")
+      .text(d => d.data.name);
+  </script>
+</body>
+</html>
