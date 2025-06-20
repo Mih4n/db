@@ -21,12 +21,28 @@ public enum TokenSubType
     If,
     Else,
     // Punctuation
+    Dot,
+    Comma,
+    Colon,
+    Equals,
+    Semicolon,
     OpenParenthesis,
     CloseParenthesis,
     // Identifiers
-    Column,
-    Table,
+    Word,
     Number,
-    Operator,
-    String
+    String,
+    // Operators
+    Addition,
+    Subtraction,
+    Multiplication,
+    Division,
+    Modulus,
+    Or,
+    And,
+    Equal,
+    NotEqual,
+    LessThan,
+    GreaterThan,
+    Assignment
 }

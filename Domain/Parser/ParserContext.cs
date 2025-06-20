@@ -5,7 +5,7 @@ namespace Domain.Parser;
 public class ParserContext
 {
     public int Current;
-    public bool IsAtEnd => Current >= Tokens.Count;
+    public bool IsAtEnd => Tokens[Current].SubType == TokenSubType.End;
     public readonly List<Token> Tokens;
 
     public ParserContext(List<Token> tokens)
@@ -20,9 +20,9 @@ public class ParserContext
             throw new Exception("Unexpected end of input");
 
         var token = Pick();
-        if (token.Type != type)
+        if (type.HasFlag(token.Type) == false)
             throw new Exception($"Expected token type {type} {string.Join(", ", expected.Select(e => e.ToString()).ToArray())}, but found {token.Type} {token.SubType} ({token.Lexeme})");
-        if (token.SubType == TokenSubType.Any)
+        if (expected.Contains(TokenSubType.Any))
             return;
         if (!expected.Contains(token.SubType))
             throw new Exception($"Expected token sub type {string.Join(", ", expected.Select(e => e.ToString()).ToArray())}, but found {token.Type} {token.SubType} ({token.Lexeme})");

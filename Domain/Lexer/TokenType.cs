@@ -1,8 +1,11 @@
 namespace Domain.Lexer;
 
+[Flags]
 public enum TokenType
 {
-    Keyword,
-    Identifier,
-    Punctuation,
+    Literal = 1,
+    Keyword = 2,
+    Operator = 4,
+    Identifier = 8,
+    Punctuation = 16,
 }

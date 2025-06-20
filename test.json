@@ -1,0 +1,40 @@
+{
+    "$type": "operation",
+    "operator": {
+        "$type": "token",
+        "type": 2,
+        "subType": 24,
+        "lexeme": "+"
+    },
+    "operands": [
+        {
+            "$type": "token",
+            "type": 3,
+            "subType": 22,
+            "lexeme": "1"
+        },
+        {
+            "$type": "operation",
+            "operator": {
+                "$type": "token",
+                "type": 2,
+                "subType": 24,
+                "lexeme": "+"
+            },
+            "operands": [
+                {
+                    "$type": "token",
+                    "type": 3,
+                    "subType": 22,
+                    "lexeme": "2"
+                },
+                {
+                    "$type": "token",
+                    "type": 3,
+                    "subType": 22,
+                    "lexeme": "3"
+                }
+            ]
+        }
+    ]
+}

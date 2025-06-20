@@ -31,16 +31,7 @@ public class WordHandler : ITokenHandler
         if (keywords.TryGetValue(lowerWord, out var subType))
             return new Token(TokenType.Keyword, subType, word);
 
-        if (context.Keyword?.SubType == TokenSubType.From)
-            return new Token(TokenType.Identifier, TokenSubType.Table, word);
-
-        if (context.Keyword?.SubType == TokenSubType.Create)
-            return new Token(TokenType.Keyword, TokenSubType.Table, word);
-
-        if (context.Keyword?.Type == TokenType.Keyword && context.Keyword?.SubType == TokenSubType.Table)
-            return new Token(TokenType.Identifier, TokenSubType.Table, word);
-
-        return new Token(TokenType.Identifier, TokenSubType.Column, word);
+        return new Token(TokenType.Identifier, TokenSubType.Word, word);
     }
 
     private bool IsWord(char c) => char.IsLetter(c) || c == '_';

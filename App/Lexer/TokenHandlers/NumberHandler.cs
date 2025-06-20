@@ -15,5 +15,5 @@ public class NumberHandler : ITokenHandler
     }
 
     private static bool IsNumber(char c)
-        => char.IsDigit(c) || c == '.' || c == 'e' || c == 'E' || c == '+' || c == '-';
+        => char.IsDigit(c) || c == '.' || c == 'e' || c == 'E';
 }

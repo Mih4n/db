@@ -1,41 +1,60 @@
-using System.Reflection;
-using App.Contracts.Parser;
+using Domain.Lexer;
 using Domain.Parser;
-using Domain.Queries;
 
-namespace App.Lexer;
+namespace App.Parser;
 
-public class Parser : IParser
+public class Parser
 {
-    private ParserContext context;
-    private List<IQueryParser> parsers = [];
-
-    public Parser(Lexer lexer)
+    public Expression Parse(List<Token> tokens)
     {
-        context = new ParserContext(lexer.Tokenize());
-
-        Assembly
-            .GetExecutingAssembly()
-            .GetTypes()
-            .Where(t =>
-                t.IsClass &&
-                !t.IsAbstract &&
-                typeof(IQueryParser).IsAssignableFrom(t)
-            )
-            .ToList()
-            .ForEach(t =>
-            {
-                var parser = (IQueryParser?)Activator.CreateInstance(t);
-                if (parser != null)
-                    parsers.Add(parser);
-            });
+        var context = new ParserContext(tokens);
+        return ParseExpression(context, 0);
     }
 
-    public IQuery Parse()
+    private Expression ParseExpression(ParserContext context, float minBp)
     {
-        var parser = parsers.FirstOrDefault(p => p.CanParse(context.Pick()));
-        if (parser == null)
-            throw new Exception("No parser found for the current token");
-        return parser.Parse(context);
+        Expression lhs;
+        Token token = context.Pick();
+        context.Advance();
+
+        if (token.Type == TokenType.Literal || token.Type == TokenType.Identifier)
+        {
+            lhs = token;
+        }
+        else if (token.Type == TokenType.Punctuation && token.SubType == TokenSubType.OpenParenthesis)
+        {
+
+            lhs = ParseExpression(context, 0);
+
+            context.Expect(TokenType.Punctuation, TokenSubType.CloseParenthesis);
+
+            return lhs;
+        }
+        else
+        {
+            throw new Exception($"Bad token: {token}");
+        }
+
+        while (true)
+        {
+            if (context.IsAtEnd) break;
+
+            Token lookahead = context.Pick();
+            if (lookahead.SubType == TokenSubType.CloseParenthesis) break;
+
+            context.Expect(TokenType.Operator | TokenType.Keyword, TokenSubType.Any);
+
+            (float leftBp, float rightBp) = lookahead.GetBindingPower();
+
+            if (leftBp <= minBp) break;
+
+            context.Advance();
+
+            Expression rhs = ParseExpression(context, rightBp);
+
+            lhs = new Operation(lookahead, [lhs, rhs]);
+        }
+
+        return lhs;
     }
 }

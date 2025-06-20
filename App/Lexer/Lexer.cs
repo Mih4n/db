@@ -7,13 +7,10 @@ namespace App.Lexer;
 
 public class Lexer
 {
-    private readonly LexerContext context;
     private readonly List<ITokenHandler> handlers = [];
 
-    public Lexer(string text)
+    public Lexer()
     {
-        context = new LexerContext(text);
-
         Assembly
             .GetExecutingAssembly()
             .GetTypes()
@@ -26,9 +23,11 @@ public class Lexer
                     handlers.Add(handler);
             });
     }
-
-    public List<Token> Tokenize()
+    
+    public List<Token> Tokenize(string text)
     {
+        var context = new LexerContext(text);
+
         var tokens = new List<Token>();
 
         while (!context.IsAtEnd)
